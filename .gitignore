@@ -1,0 +1,47 @@
+# ---- Go ----
+# Compiled binaries
+/bin/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace / build cache
+go.work
+go.work.sum
+
+# Dependency directories (uncomment if vendoring)
+# vendor/
+
+# Coverage files
+*.cover
+coverage.out
+coverage.html
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- IntelliJ / GoLand ----
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+
+# ---- Docker ----
+docker-compose.override.yml
+
+tmp
