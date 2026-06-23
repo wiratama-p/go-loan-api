@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"go-loan-api/internal/client"
+	"go-loan-api/internal/client_response"
 	"go-loan-api/internal/model"
 
 	"github.com/google/uuid"
@@ -33,11 +33,12 @@ func ToLoanModel(request *CreateLoanRequest, rule *model.LoanRule) *model.Loan {
 		Amount:       request.Amount,
 		InterestRate: rule.InterestRate,
 		Tenure:       rule.Tenure,
+		Purpose:      request.Purpose,
 		Status:       "PENDING",
 	}
 }
 
-func ToLoanResponse(loan *model.Loan, customerInfo *client.CustomerInfo) *LoanResponse {
+func ToLoanResponse(loan *model.Loan, customerInfo *client_response.CustomerInfo) *LoanResponse {
 	return &LoanResponse{
 		ID:           loan.ID.String(),
 		CustomerID:   customerInfo.ID,

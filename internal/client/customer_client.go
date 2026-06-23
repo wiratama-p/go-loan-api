@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-loan-api/internal/apperror"
+	"go-loan-api/internal/client_response"
 	"go-loan-api/internal/dto"
 	"net/http"
 	"os"
@@ -16,13 +17,8 @@ var (
 	ErrCustomerSvcUnavailable = "customer service unavailable"
 )
 
-type CustomerInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
-
 type CustomerClient interface {
-	GetCustomer(ctx context.Context, customerID string) (*CustomerInfo, error)
+	GetCustomer(ctx context.Context, customerID string) (*client_response.CustomerInfo, error)
 }
 
 type HttpCustomerClient struct {
@@ -40,7 +36,7 @@ func NewHttpCustomerClient() *HttpCustomerClient {
 	}
 }
 
-func (client *HttpCustomerClient) GetCustomer(ctx context.Context, customerID string) (*CustomerInfo, error) {
+func (client *HttpCustomerClient) GetCustomer(ctx context.Context, customerID string) (*client_response.CustomerInfo, error) {
 	url := fmt.Sprintf("%s/customers/%s", client.BaseUrl, customerID)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -57,7 +53,7 @@ func (client *HttpCustomerClient) GetCustomer(ctx context.Context, customerID st
 		return nil, apperror.InternalServerError(ErrCustomerNotFound)
 	}
 	if http.StatusOK == resp.StatusCode {
-		var customer dto.Response[CustomerInfo]
+		var customer dto.Response[client_response.CustomerInfo]
 		if err := json.NewDecoder(resp.Body).Decode(&customer); err != nil {
 			return nil, apperror.InternalServerError(ErrCustomerSvcUnavailable)
 		}

@@ -13,16 +13,15 @@ import (
 
 var (
 	LoanRuleNotFound = "Loan rule for amount %d not found"
-	NotExistingID    = "00000000-0000-0000-0000-000000000000"
 )
 
 type LoanService struct {
 	loanRepository     *repository.LoanRepository
 	loanRuleRepository *repository.LoanRuleRepository
-	customerClient     *client.HttpCustomerClient
+	customerClient     client.CustomerClient
 }
 
-func NewLoanService(loanRepository *repository.LoanRepository, loanRuleRepository *repository.LoanRuleRepository, customerClient *client.HttpCustomerClient) *LoanService {
+func NewLoanService(loanRepository *repository.LoanRepository, loanRuleRepository *repository.LoanRuleRepository, customerClient client.CustomerClient) *LoanService {
 	return &LoanService{
 		loanRepository:     loanRepository,
 		loanRuleRepository: loanRuleRepository,
