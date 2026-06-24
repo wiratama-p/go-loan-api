@@ -36,3 +36,15 @@ func (repository *LoanRepository) GetAllByCustomerId(ctx *gin.Context, page int,
 
 	return &loans
 }
+
+func (repository *LoanRepository) UpdateLoanStatus(ctx *gin.Context, loanId string, status string) (*model.Loan, error) {
+	var loan model.Loan
+	result := repository.DB.WithContext(ctx).
+		Where("id = ? ", loanId).
+		First(&loan)
+	loan.Status = status
+
+	repository.DB.WithContext(ctx).Updates(&loan)
+
+	return &loan, result.Error
+}

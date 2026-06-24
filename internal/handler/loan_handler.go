@@ -22,6 +22,7 @@ func NewLoanHandler(loanService *service.LoanService) *LoanHandler {
 func (handler *LoanHandler) RegisterRoute(engine *gin.Engine) {
 	loansGroup := engine.Group("/loans")
 	loansGroup.POST("", handler.Create)
+	loansGroup.PATCH("/:id/status", handler.UpdateLoanStatus)
 	customersGroup := engine.Group("/customers")
 	customersGroup.GET("/:id/loans", handler.GetByCustomerID)
 }
@@ -50,4 +51,24 @@ func (handler *LoanHandler) GetByCustomerID(ctx *gin.Context) {
 
 	loans := handler.loanService.GetAllByCustomerID(ctx, page, customerId)
 	dto.Ok(ctx, loans)
+}
+
+func (handler *LoanHandler) UpdateLoanStatus(ctx *gin.Context) {
+	var request dto.UpdateLoanStatusRequest
+	loanId := ctx.Param("id")
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, &dto.Response[any]{
+			Code:   http.StatusBadRequest,
+			Status: "Validation Failed",
+			Error:  err.Error(),
+		})
+		return
+	}
+	updatedLoan, err := handler.loanService.UpdateLoanStatus(ctx, loanId, request.Status)
+	if err != nil {
+		ToErrorResponse(ctx, err)
+		return
+	}
+	dto.Ok(ctx, updatedLoan)
 }

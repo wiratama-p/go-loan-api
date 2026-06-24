@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-loan-api/internal/apperror"
 	"go-loan-api/internal/client"
+	"go-loan-api/internal/client_response"
 	"go-loan-api/internal/dto"
 	"go-loan-api/internal/repository"
 
@@ -12,6 +13,7 @@ import (
 
 var (
 	LoanRuleNotFound = "Loan rule for amount %d not found"
+	LoanNotFound     = "Loan with loan id: %d not found"
 )
 
 type LoanService struct {
@@ -47,4 +49,13 @@ func (loanService *LoanService) GetAllByCustomerID(ctx *gin.Context, page int, c
 	loans := loanService.loanRepository.GetAllByCustomerId(ctx, page, customerID)
 
 	return dto.ToLoanResponses(loans)
+}
+
+func (loanService *LoanService) UpdateLoanStatus(ctx *gin.Context, loanId string, status string) (*dto.LoanResponse, error) {
+	updatedLoanStatus, err := loanService.loanRepository.UpdateLoanStatus(ctx, loanId, status)
+	if err != nil {
+		return nil, apperror.NotFound(fmt.Sprintf(LoanNotFound, loanId))
+	}
+
+	return dto.ToLoanResponse(updatedLoanStatus, &client_response.CustomerInfo{}), nil
 }

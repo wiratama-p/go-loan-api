@@ -13,6 +13,10 @@ type CreateLoanRequest struct {
 	Purpose    string `json:"purpose"`
 }
 
+type UpdateLoanStatusRequest struct {
+	Status string `json:"status" binding:"required" oneof:"PENDING APPROVED REJECTED"`
+}
+
 type LoanResponse struct {
 	ID           string  `json:"id"`
 	CustomerID   *string `json:"customer_id"`
