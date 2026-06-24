@@ -21,3 +21,18 @@ func (repository LoanRepository) Create(ctx *gin.Context, loan *model.Loan) (*mo
 	result := repository.DB.WithContext(ctx).Create(&loan)
 	return loan, result.Error
 }
+
+func (repository *LoanRepository) GetAllByCustomerId(ctx *gin.Context, page int, customerID string) *[]model.Loan {
+	var loans []model.Loan
+	offset := (page - 1) * 10
+	repository.DB.
+		Debug().
+		WithContext(ctx).
+		Where("customer_id = ?", customerID).
+		Order("COALESCE(updated_at, created_at) DESC").
+		Offset(offset).
+		Limit(10).
+		Find(&loans)
+
+	return &loans
+}

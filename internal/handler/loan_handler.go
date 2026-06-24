@@ -4,6 +4,7 @@ import (
 	"go-loan-api/internal/dto"
 	"go-loan-api/internal/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,8 +20,10 @@ func NewLoanHandler(loanService *service.LoanService) *LoanHandler {
 }
 
 func (handler *LoanHandler) RegisterRoute(engine *gin.Engine) {
-	group := engine.Group("/loans")
-	group.POST("", handler.Create)
+	loansGroup := engine.Group("/loans")
+	loansGroup.POST("", handler.Create)
+	customersGroup := engine.Group("/customers")
+	customersGroup.GET("/:id/loans", handler.GetByCustomerID)
 }
 
 func (handler *LoanHandler) Create(ctx *gin.Context) {
@@ -39,4 +42,12 @@ func (handler *LoanHandler) Create(ctx *gin.Context) {
 		return
 	}
 	dto.Created(ctx, createdLoan)
+}
+
+func (handler *LoanHandler) GetByCustomerID(ctx *gin.Context) {
+	page, _ := strconv.Atoi(ctx.Query("page"))
+	customerId := ctx.Param("id")
+
+	loans := handler.loanService.GetAllByCustomerID(ctx, page, customerId)
+	dto.Ok(ctx, loans)
 }

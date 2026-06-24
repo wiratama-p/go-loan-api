@@ -14,16 +14,16 @@ type CreateLoanRequest struct {
 }
 
 type LoanResponse struct {
-	ID           string `json:"id"`
-	CustomerID   string `json:"customer_id"`
-	CustomerName string `json:"customer_name"`
-	Amount       int64  `json:"amount"`
-	InterestRate int    `json:"interest_rate"`
-	Tenure       int    `json:"tenure"`
-	Status       string `json:"status"`
-	Purpose      string `json:"purpose"`
-	CreatedAt    int64  `json:"created_at"`
-	UpdatedAt    int64  `json:"updated_at"`
+	ID           string  `json:"id"`
+	CustomerID   *string `json:"customer_id"`
+	CustomerName *string `json:"customer_name"`
+	Amount       int64   `json:"amount"`
+	InterestRate int     `json:"interest_rate"`
+	Tenure       int     `json:"tenure"`
+	Status       string  `json:"status"`
+	Purpose      string  `json:"purpose"`
+	CreatedAt    int64   `json:"created_at"`
+	UpdatedAt    int64   `json:"updated_at"`
 }
 
 func ToLoanModel(request *CreateLoanRequest, rule *model.LoanRule) *model.Loan {
@@ -51,4 +51,16 @@ func ToLoanResponse(loan *model.Loan, customerInfo *client_response.CustomerInfo
 		CreatedAt:    loan.CreatedAt,
 		UpdatedAt:    loan.UpdatedAt,
 	}
+}
+
+func ToLoanResponses(loans *[]model.Loan) *[]LoanResponse {
+	responses := []LoanResponse{}
+	for _, loan := range *loans {
+		loanResponse := ToLoanResponse(&loan, &client_response.CustomerInfo{
+			ID:   nil,
+			Name: nil,
+		})
+		responses = append(responses, *loanResponse)
+	}
+	return &responses
 }

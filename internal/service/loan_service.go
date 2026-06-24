@@ -6,7 +6,6 @@ import (
 	"go-loan-api/internal/client"
 	"go-loan-api/internal/dto"
 	"go-loan-api/internal/repository"
-	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,7 +34,6 @@ func (loanService *LoanService) Create(ctx *gin.Context, request *dto.CreateLoan
 		return nil, apperror.BadRequest(fmt.Sprintf(LoanRuleNotFound, request.Amount))
 	}
 	foundCustomer, err := loanService.customerClient.GetCustomer(ctx.Request.Context(), request.CustomerID)
-	log.Printf("foundCustomer: %+v", foundCustomer)
 	if err != nil {
 		return nil, err
 	}
@@ -43,4 +41,10 @@ func (loanService *LoanService) Create(ctx *gin.Context, request *dto.CreateLoan
 	createdLoan, _ := loanService.loanRepository.Create(ctx, loan)
 
 	return dto.ToLoanResponse(createdLoan, foundCustomer), nil
+}
+
+func (loanService *LoanService) GetAllByCustomerID(ctx *gin.Context, page int, customerID string) *[]dto.LoanResponse {
+	loans := loanService.loanRepository.GetAllByCustomerId(ctx, page, customerID)
+
+	return dto.ToLoanResponses(loans)
 }
